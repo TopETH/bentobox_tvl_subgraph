@@ -1,4 +1,4 @@
-specVersion: 0.0.1
+specVersion: 0.0.2
 schema:
   file: ./schema.graphql
 dataSources:
@@ -13,56 +13,43 @@ dataSources:
       apiVersion: 0.0.5
       language: wasm/assemblyscript
       entities:
-        - LogDeploy
         - LogDeposit
-        - LogFlashLoan
-        - LogRegisterProtocol
-        - LogSetMasterContractApproval
-        - LogStrategyDivest
-        - LogStrategyInvest
-        - LogStrategyLoss
-        - LogStrategyProfit
-        - LogStrategyQueued
-        - LogStrategySet
-        - LogStrategyTargetPercentage
-        - LogTransfer
-        - LogWhiteListMasterContract
         - LogWithdraw
-        - OwnershipTransferred
       abis:
         - name: BentoBoxV1
           file: ./abis/BentoBoxV1.json
+        - name: ERC20
+          file: ./abis/ERC20.json
       eventHandlers:
-        - event: LogDeploy(indexed address,bytes,indexed address)
-          handler: handleLogDeploy
         - event: LogDeposit(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleLogDeposit
-        - event: LogFlashLoan(indexed address,indexed address,uint256,uint256,indexed address)
-          handler: handleLogFlashLoan
-        - event: LogRegisterProtocol(indexed address)
-          handler: handleLogRegisterProtocol
-        - event: LogSetMasterContractApproval(indexed address,indexed address,bool)
-          handler: handleLogSetMasterContractApproval
-        - event: LogStrategyDivest(indexed address,uint256)
-          handler: handleLogStrategyDivest
-        - event: LogStrategyInvest(indexed address,uint256)
-          handler: handleLogStrategyInvest
-        - event: LogStrategyLoss(indexed address,uint256)
-          handler: handleLogStrategyLoss
-        - event: LogStrategyProfit(indexed address,uint256)
-          handler: handleLogStrategyProfit
-        - event: LogStrategyQueued(indexed address,indexed address)
-          handler: handleLogStrategyQueued
-        - event: LogStrategySet(indexed address,indexed address)
-          handler: handleLogStrategySet
-        - event: LogStrategyTargetPercentage(indexed address,uint256)
-          handler: handleLogStrategyTargetPercentage
-        - event: LogTransfer(indexed address,indexed address,indexed address,uint256)
-          handler: handleLogTransfer
-        - event: LogWhiteListMasterContract(indexed address,bool)
-          handler: handleLogWhiteListMasterContract
+          handler: handleDeposit
         - event: LogWithdraw(indexed address,indexed address,indexed address,uint256,uint256)
-          handler: handleLogWithdraw
-        - event: OwnershipTransferred(indexed address,indexed address)
-          handler: handleOwnershipTransferred
+          handler: handleWithdraw
+        - event: LogStrategyProfit(indexed address,uint256)
+          handler: handleHarvestEarn
+        - event: LogStrategyLoss(indexed address,uint256)
+          handler: handleHarvestLost
+        - event: LogStrategyDivest(indexed address,uint256)
+          handler: handleDivest
+        - event: LogStrategyInvest(indexed address,uint256)
+          handler: handleInvest
+      file: ./src/mapping.ts
+  - kind: ethereum
+    name: ERC20
+    network: mainnet
+    source:
+      address: "0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48"
+      abi: ERC20
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.5
+      language: wasm/assemblyscript
+      entities: []
+      abis:
+        - name: ERC20
+          file: ./abis/ERC20.json
+      blockHandlers:
+        - handler: handleBlock
+          filter:
+            kind: call
       file: ./src/mapping.ts

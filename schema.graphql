@@ -1,6 +1,7 @@
-type ExampleEntity @entity {
-  id: ID!
-  count: BigInt!
-  masterContract: Bytes! # address
-  data: Bytes! # bytes
+type BalanceEntity @entity {
+  id: ID! # ERC20 token address
+  decimals: BigInt!
+  deposit_sum: BigInt!
+  tvl: BigInt!
+  withdraw_sum: BigInt!
 }
